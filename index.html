@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DEJA'VU KR0M3D1A</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <style>
+    /* Custom styles from the app's aesthetic */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Exo+2:wght@700;900&display=swap');
+
+    body {
+      font-family: 'Roboto Mono', monospace;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .font-sans {
+        font-family: 'Roboto Mono', monospace;
+    }
+
+    .neon-blink-border {
+        animation: neon-blink 1.5s infinite alternate;
+    }
+    @keyframes neon-blink {
+        from { border-color: rgba(239, 68, 68, 0.5); box-shadow: 0 0 5px rgba(239, 68, 68, 0.2); }
+        to { border-color: rgba(239, 68, 68, 1); box-shadow: 0 0 20px rgba(239, 68, 68, 0.7); }
+    }
+    
+    .error-boundary-glow-border {
+       box-shadow: 0 0 20px 5px rgba(239, 68, 68, 0.4);
+    }
+
+    .alert-glow-border {
+        box-shadow: 0 0 15px 3px rgba(239, 68, 68, 0.3);
+    }
+    
+    .seething-lime-glow {
+        animation: seething-lime-glow 2s infinite alternate;
+    }
+    @keyframes seething-lime-glow {
+        from { box-shadow: 0 0 5px #a3e635, 0 0 10px #a3e635, 0 0 15px #a3e635; }
+        to { box-shadow: 0 0 15px #a3e635, 0 0 30px #a3e635, 0 0 45px #a3e635; }
+    }
+    
+    .text-glow-main-title {
+        color: #bef264; /* lime-300 for brightness */
+        text-shadow: 0 0 5px #a3e635, 0 0 10px #a3e635, 0 0 20px #a3e635;
+    }
+
+    .pythagoras-animated {
+        animation: rotate-and-glow 10s linear infinite;
+    }
+
+    @keyframes rotate-and-glow {
+        0% { transform: rotate(0deg); filter: drop-shadow(0 0 2px #94a3b8); }
+        50% { transform: rotate(180deg); filter: drop-shadow(0 0 10px #e2e8f0); }
+        100% { transform: rotate(360deg); filter: drop-shadow(0 0 2px #94a3b8); }
+    }
+    
+    .animate-fade-in-right {
+        animation: fade-in-right 0.5s ease-out forwards;
+    }
+
+    @keyframes fade-in-right {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    .text-flicker {
+        animation: text-flicker 3s linear infinite;
+    }
+
+    @keyframes text-flicker {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    .bg-grid-cyan {
+        background-image:
+            linear-gradient(to right, rgba(6, 182, 212, 0.2) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(6, 182, 212, 0.2) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+
+    .scanline {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0));
+        background-size: 100% 4px;
+        animation: scanline-anim 10s linear infinite;
+    }
+    
+    @keyframes scanline-anim {
+        from { background-position: 0 0; }
+        to { background-position: 0 200px; }
+    }
+    
+    .threatscape-glitch {
+        animation: glitch-anim 0.5s infinite;
+    }
+    
+    @keyframes glitch-anim {
+        0% { transform: translate(0); }
+        20% { transform: translate(-2px, 2px); }
+        40% { transform: translate(-2px, -2px); }
+        60% { transform: translate(2px, 2px); }
+        80% { transform: translate(2px, -2px); }
+        100% { transform: translate(0); }
+    }
+    
+    /* Marquee Animations */
+    @keyframes marquee {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+    }
+    .animate-marquee {
+        animation: marquee 60s linear infinite;
+    }
+    
+    @keyframes marquee-reverse {
+        from { transform: translateX(-50%); }
+        to { transform: translateX(0); }
+    }
+    .animate-marquee-reverse {
+        animation: marquee-reverse 40s linear infinite;
+    }
+    
+    .cymatic-wave-path {
+        animation: wave-anim 10s linear infinite;
+    }
+    @keyframes wave-anim {
+        from { transform: translateX(0); }
+        to { transform: translateX(-1000px); }
+    }
+    
+    /* Ohmz NFT Visualizer animations */
+    .gas-particle {
+      animation: expand-and-fade 8s infinite ease-out;
+    }
+    @keyframes expand-and-fade {
+      0% { r: 0; opacity: 1; }
+      100% { r: 100; opacity: 0; }
+    }
+    .perpetual-ring {
+      animation: rotate-slow 20s linear infinite;
+      transform-origin: center;
+    }
+    .ohmz-core {
+      animation: pulse-core 4s infinite ease-in-out;
+      transform-origin: center;
+    }
+    @keyframes pulse-core {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+    }
+    .fractal-element {
+      animation: rotate-slow-reverse 30s linear infinite;
+      transform-origin: center;
+    }
+
+    @keyframes rotate-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes rotate-slow-reverse {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+
+    .text-glow-btc {
+        text-shadow: 0 0 5px #f7931a, 0 0 10px #f7931a, 0 0 15px #f7931a, 0 0 20px #f7931a;
+    }
+
+    .text-glow-red {
+        text-shadow: 0 0 5px #ef4444, 0 0 10px #ef4444, 0 0 15px #ef4444;
+    }
+
+    .text-glow-lime {
+        color: #a3e635; /* lime-400 */
+        text-shadow: 0 0 5px #a3e635, 0 0 10px #a3e635, 0 0 20px #a3e635, 0 0 30px #a3e635;
+    }
+
+    .flux-gauge-fill {
+      transition: stroke-dashoffset 0.5s ease-out;
+      stroke-dashoffset: var(--stroke-dashoffset);
+    }
+    .flux-gauge-needle {
+      transform: rotate(var(--angle));
+    }
+    
+    .bar-animated {
+        animation: bar-grow 0.5s ease-out forwards;
+        transform-origin: bottom;
+    }
+
+    @keyframes bar-grow {
+        from { transform: scaleY(0); }
+        to { transform: scaleY(1); }
+    }
+    
+    .chart-line-animated {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: dash 2s ease-out forwards;
+    }
+    .chart-area-animated {
+      opacity: 0;
+      animation: fade-in 1s ease-out 0.5s forwards;
+    }
+    @keyframes dash {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+    @keyframes fade-in {
+      to {
+        opacity: 1;
+      }
+    }
+    
+    .intel-item {
+        animation: fade-in-down 0.5s ease-out forwards;
+    }
+
+    @keyframes fade-in-down {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .detection-point {
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+    
+    .detection-point:hover {
+        r: 8;
+        stroke-width: 3;
+    }
+    
+    .detection-point.disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        animation: none;
+    }
+    .detection-point.disabled:hover {
+        r: 5;
+        stroke-width: 1.5;
+    }
+
+    @keyframes pulse-glow {
+        from {
+            filter: drop-shadow(0 0 2px #ef4444);
+            opacity: 0.8;
+        }
+        to {
+            filter: drop-shadow(0 0 10px #ef4444);
+            opacity: 1;
+        }
+    }
+
+    /* Severity-based animations */
+    @keyframes pulse-glow-critical {
+        from { filter: drop-shadow(0 0 5px #dc2626); opacity: 1; }
+        to { filter: drop-shadow(0 0 20px #ef4444); opacity: 1; }
+    }
+    @keyframes pulse-glow-high {
+        from { filter: drop-shadow(0 0 3px #f97316); opacity: 0.9; }
+        to { filter: drop-shadow(0 0 15px #f97316); opacity: 1; }
+    }
+    @keyframes pulse-glow-medium {
+        from { filter: drop-shadow(0 0 2px #eab308); opacity: 0.8; }
+        to { filter: drop-shadow(0 0 10px #eab308); opacity: 1; }
+    }
+    @keyframes pulse-glow-low {
+        from { filter: drop-shadow(0 0 1px #22c55e); opacity: 0.7; }
+        to { filter: drop-shadow(0 0 5px #22c55e); opacity: 1; }
+    }
+
+    .default-pulse { animation: pulse-glow 2s infinite alternate; }
+    .detection-point-critical { animation: pulse-glow-critical 1s infinite alternate; }
+    .detection-point-high { animation: pulse-glow-high 1.5s infinite alternate; }
+    .detection-point-medium { animation: pulse-glow-medium 2s infinite alternate; }
+    .detection-point-low { animation: pulse-glow-low 2.5s infinite alternate; }
+
+
+    .map-info-panel {
+        animation: slide-in-from-right 0.5s ease-out forwards;
+    }
+
+    @keyframes slide-in-from-right {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    .constellation-line {
+        stroke: rgba(6, 182, 212, 0.4);
+        stroke-width: 0.75;
+        filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.5));
+        stroke-dasharray: 4 4;
+        animation: flow 20s linear infinite;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .constellation-line-highlight {
+        stroke: rgba(234, 179, 8, 1);
+        stroke-width: 1.5;
+        filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.8));
+        stroke-dasharray: none;
+        animation: none;
+    }
+
+    @keyframes flow {
+        from { stroke-dashoffset: 0; }
+        to { stroke-dashoffset: -80; }
+    }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://aistudiocdn.com/react@^19.2.0",
+      "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+      "react/": "https://aistudiocdn.com/react@^19.2.0/",
+      "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="index.tsx"></script>
+</body>
+</html>
