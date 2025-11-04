@@ -20,6 +20,23 @@ const examplePrompts = [
 
 const MAX_PROMPT_LENGTH = 5000; // Define maximum prompt length
 
+const ProgressBar: React.FC<{ isLoading: boolean; interimStatus: string }> = ({ isLoading, interimStatus }) => {
+    const showBar = isLoading || interimStatus === 'analyzing';
+    if (!showBar) return null;
+
+    const isIndeterminate = interimStatus === 'analyzing';
+    
+    return (
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 my-3 overflow-hidden">
+            <div
+                className={`h-1.5 rounded-full ${isIndeterminate 
+                    ? 'bg-cyan-500 w-1/2 progress-bar-indeterminate' 
+                    : 'bg-gradient-to-r from-cyan-500 to-purple-500 progress-bar-determinate'}`}
+            ></div>
+        </div>
+    );
+};
+
 export const PromptInput: React.FC<PromptInputProps> = ({ prompt, setPrompt, onSubmit, isLoading, interimStatus, progressMessage }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +115,7 @@ export const PromptInput: React.FC<PromptInputProps> = ({ prompt, setPrompt, onS
               Prompt exceeds the maximum length of {MAX_PROMPT_LENGTH} characters.
           </p>
       )}
+      <ProgressBar isLoading={isLoading} interimStatus={interimStatus} />
       <button
         type="submit"
         disabled={isLoading || !prompt.trim() || isOverLimit}

@@ -334,6 +334,22 @@
         from { stroke-dashoffset: 0; }
         to { stroke-dashoffset: -80; }
     }
+
+    /* Progress Bar Animations */
+    @keyframes indeterminate-anim {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(300%); } /* move across 1.5 * width */
+    }
+    .progress-bar-indeterminate {
+        animation: indeterminate-anim 1.5s linear infinite;
+    }
+    @keyframes determinate-anim {
+        from { width: 0%; }
+        to { width: 100%; }
+    }
+    .progress-bar-determinate {
+        animation: determinate-anim 8s ease-out forwards;
+    }
   </style>
 
   <script type="importmap">

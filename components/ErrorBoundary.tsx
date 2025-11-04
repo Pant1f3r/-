@@ -28,6 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   handleReset = () => {
     // FIX: In a class component, `setState` must be called on the component instance (`this`).
+    // FIX: Corrected to use `this.setState` as it is a class component.
     this.setState({ hasError: false, error: null });
   };
 
@@ -63,6 +64,7 @@ export class ErrorBoundary extends Component<Props, State> {
     }
 
     // FIX: In a class component, `props` must be accessed from the component instance (`this`).
+    // FIX: Corrected to use `this.props` as it is a class component.
     return this.props.children;
   }
 }

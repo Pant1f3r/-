@@ -1,10 +1,12 @@
 
+
 import React from 'react';
 
 interface GeminiResponseProps {
   response: string;
   isLoading: boolean;
   error: string;
+  progressMessage: string;
 }
 
 const LoadingSkeleton: React.FC = () => (
@@ -15,7 +17,7 @@ const LoadingSkeleton: React.FC = () => (
   </div>
 );
 
-export const GeminiResponse: React.FC<GeminiResponseProps> = ({ response, isLoading, error }) => {
+export const GeminiResponse: React.FC<GeminiResponseProps> = ({ response, isLoading, error, progressMessage }) => {
   const hasContent = response || error;
   
   return (
@@ -28,7 +30,16 @@ export const GeminiResponse: React.FC<GeminiResponseProps> = ({ response, isLoad
         AI Model Response
       </h3>
       <div className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap flex-grow overflow-y-auto">
-        {isLoading && <LoadingSkeleton />}
+        {isLoading && (
+            <div>
+                {progressMessage && (
+                    <p className="font-mono text-cyan-400 dark:text-cyan-400 mb-3 animate-fade-in-right">
+                        {`> ${progressMessage}`}
+                    </p>
+                )}
+                <LoadingSkeleton />
+            </div>
+        )}
         {!isLoading && !hasContent && (
            <div className="text-gray-500 h-full flex items-center justify-center">
             <p>AI response will appear here.</p>

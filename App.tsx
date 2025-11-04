@@ -146,7 +146,7 @@ const mapSentimentToSeverity = (sentiment: string, confidence: number): AnomalyS
 
 const App: React.FC = () => {
     const [theme, setTheme] = useState<'light' | 'dark'>('dark');
-    const [currentView, setCurrentView] = useState<View>('investor-pitch');
+    const [currentView, setCurrentView] = useState<View>('arconomics');
     const [toasts, setToasts] = useState<Toast[]>([]);
     const [keySelectionResetter, setKeySelectionResetter] = useState<() => void>(() => () => {});
     const [navFilter, setNavFilter] = useState('');
@@ -608,97 +608,98 @@ const App: React.FC = () => {
     };
 
     const handleAnalyzeAnomaly = async (anomaly: Anomaly) => {
+        // If not a new detection, just show the details without re-triggering the flow.
         if (anomaly.status !== 'Detected') {
             setSelectedAnomaly(anomaly);
             if (anomaly.status === 'Brief Generated' && anomaly.analysis) {
-                const brief = await geminiService.generateLegalBrief(anomaly); // Re-generate for display if needed
-                setGeneratedBrief(brief);
+                // Re-generate brief for display if it's not in state
+                setIsBiasLoading(true);
+                try {
+                    const brief = await geminiService.generateLegalBrief(anomaly);
+                    setGeneratedBrief(brief);
+                } catch (e: any) {
+                    setBiasError(e.message);
+                } finally {
+                    setIsBiasLoading(false);
+                }
             }
             return;
         }
-
+    
+        // --- START OF AUTOMATED PROSECUTION SEQUENCE ---
         setIsBiasLoading(true);
         setBiasError('');
         setSelectedAnomaly(anomaly);
-
+        addToast(`[ARCONOMICS] Initiating prosecution for: ${anomaly.signature}`, 'info', 10000);
+    
         try {
+            // == STEP 1: Analyze Anomaly ==
+            addToast(`[STEP 1/3] Generating impact analysis...`, 'info', 10000);
             const [analysis, sentimentResult] = await Promise.all([
                 geminiService.generateAnomalyAnalysis(anomaly.signature, anomaly.targetSystem),
                 geminiService.analyzeSentiment(anomaly.description)
             ]);
             
-            setAnomalies(prev => prev.map(a =>
-                a.id === anomaly.id ? {
-                    ...a,
-                    analysis,
-                    sentiment: sentimentResult.sentiment,
-                    confidenceScore: sentimentResult.confidenceScore,
-                    severity: mapSentimentToSeverity(sentimentResult.sentiment, sentimentResult.confidenceScore),
-                    status: 'Analyzed'
-                } : a
-            ));
-            
-            setSelectedAnomaly(prev => prev ? {
-                ...prev,
+            const analyzedAnomaly: Anomaly = {
+                ...anomaly,
                 analysis,
                 sentiment: sentimentResult.sentiment,
                 confidenceScore: sentimentResult.confidenceScore,
                 severity: mapSentimentToSeverity(sentimentResult.sentiment, sentimentResult.confidenceScore),
                 status: 'Analyzed'
-            } : null);
-
-        } catch (e: any) {
-            setBiasError(e.message);
-        } finally {
-            setIsBiasLoading(false);
-        }
-    };
-
-    const handleGenerateBrief = async (anomaly: Anomaly) => {
-        if (anomaly.status !== 'Analyzed') return;
-        
-        setIsBiasLoading(true);
-        setBiasError('');
-        setGeneratedBrief(null);
-        
-        try {
-            const brief = await geminiService.generateLegalBrief(anomaly);
+            };
+    
+            setAnomalies(prev => prev.map(a => a.id === anomaly.id ? analyzedAnomaly : a));
+            setSelectedAnomaly(analyzedAnomaly);
+            addToast(`[SUCCESS] Impact analysis complete.`, 'success', 5000);
+            await new Promise(res => setTimeout(res, 2000));
+    
+            // == STEP 2: Generate Legal Brief ==
+            addToast(`[STEP 2/3] Drafting legal brief for IDRC...`, 'info', 10000);
+            const brief = await geminiService.generateLegalBrief(analyzedAnomaly);
             setGeneratedBrief(brief);
             
-             setAnomalies(prev => prev.map(a =>
-                a.id === anomaly.id ? { ...a, status: 'Brief Generated' } : a
+            const briefGeneratedAnomaly = { ...analyzedAnomaly, status: 'Brief Generated' as const };
+            
+            setAnomalies(prev => prev.map(a => a.id === anomaly.id ? briefGeneratedAnomaly : a));
+            setSelectedAnomaly(briefGeneratedAnomaly);
+            addToast(`[SUCCESS] Legal brief drafted.`, 'success', 5000);
+            await new Promise(res => setTimeout(res, 2000));
+    
+            // == STEP 3: File Brief & Issue Verdict ==
+            addToast(`[STEP 3/3] Filing with court and issuing verdict...`, 'info', 10000);
+            
+            const newCase: LegalCase = {
+                id: Date.now(),
+                docketId: `IDRC-${anomaly.id}-${Math.floor(Math.random() * 1000)}`,
+                target: anomaly.targetSystem,
+                biasSignature: anomaly.signature,
+                status: 'Brief Filed with IDRC',
+                petition: brief || 'Brief content unavailable.'
+            };
+            setLegalCases(prev => [newCase, ...prev]);
+            setAnomalies(prev => prev.map(a =>
+                a.id === anomaly.id ? { ...briefGeneratedAnomaly, status: 'Actioned' } : a
             ));
-             setSelectedAnomaly(prev => prev ? { ...prev, status: 'Brief Generated' } : null);
-
+            
+            const fineAmount = 600666000;
+            setCourtTreasury(prev => prev + fineAmount);
+    
+            setGlobalAwareness(prev => Math.min(100, prev + 2.5));
+            addToast(`Verdict issued for ${anomaly.signature}. Fine of ${fineAmount.toLocaleString()} TRIBUNALS ($${fineAmount.toLocaleString()} USD) added to treasury.`, 'success', 0);
+            
+            // Close the info panel after a delay to let the user see the final state
+            setTimeout(() => {
+                setSelectedAnomaly(null); 
+                setGeneratedBrief(null);
+            }, 3000);
+    
         } catch (e: any) {
             setBiasError(e.message);
+            addToast(`[ERROR] Arconomics prosecution failed: ${e.message}`, 'error', 0);
         } finally {
             setIsBiasLoading(false);
         }
-    };
-    
-    const handleFileBrief = (anomaly: Anomaly) => {
-        const newCase: LegalCase = {
-            id: Date.now(),
-            docketId: `IDRC-${anomaly.id}-${Math.floor(Math.random() * 1000)}`,
-            target: anomaly.targetSystem,
-            biasSignature: anomaly.signature,
-            status: 'Brief Filed with IDRC',
-            petition: generatedBrief || 'Brief content unavailable.'
-        };
-        setLegalCases(prev => [newCase, ...prev]);
-        setAnomalies(prev => prev.map(a =>
-            a.id === anomaly.id ? { ...a, status: 'Actioned' } : a
-        ));
-        
-        // Add fine to treasury
-        const fineAmount = 600666000;
-        setCourtTreasury(prev => prev + fineAmount);
-
-        setSelectedAnomaly(null);
-        setGeneratedBrief(null);
-        setGlobalAwareness(prev => Math.min(100, prev + 2.5)); // Increase global awareness
-        addToast(`Verdict issued for ${anomaly.signature}. Fine of ${fineAmount.toLocaleString()} TRIBUNALS ($${fineAmount.toLocaleString()} USD) added to treasury.`, 'success');
     };
 
     const handleLoadReport = (id: number) => {
@@ -841,7 +842,7 @@ const App: React.FC = () => {
             case 'crypto-mining':
                 return <CryptoMining />;
             case 'arconomics':
-                return <Arconomics onAnalyzeAnomaly={handleAnalyzeAnomaly} onGenerateBrief={handleGenerateBrief} onFileBrief={handleFileBrief} isLoading={isBiasLoading} anomalies={anomalies} legalCases={legalCases} selectedAnomaly={selectedAnomaly} setSelectedAnomaly={setSelectedAnomaly} error={biasError} globalAwareness={globalAwareness} generatedBrief={generatedBrief} courtTreasury={courtTreasury} addToast={addToast} />;
+                return <Arconomics onAnalyzeAnomaly={handleAnalyzeAnomaly} isLoading={isBiasLoading} anomalies={anomalies} legalCases={legalCases} selectedAnomaly={selectedAnomaly} setSelectedAnomaly={setSelectedAnomaly} error={biasError} globalAwareness={globalAwareness} generatedBrief={generatedBrief} courtTreasury={courtTreasury} addToast={addToast} />;
             case 'innovation-conduit':
                 return <InnovationConduit />;
             case 'code-execution':

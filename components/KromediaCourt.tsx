@@ -11,8 +11,6 @@ import { BiasSimulationInterface } from './BiasSimulationInterface';
 
 interface ArconomicsProps {
     onAnalyzeAnomaly: (anomaly: Anomaly) => void;
-    onGenerateBrief: (anomaly: Anomaly) => void;
-    onFileBrief: (anomaly: Anomaly) => void;
     isLoading: boolean;
     anomalies: Anomaly[];
     legalCases: LegalCase[];
@@ -68,10 +66,49 @@ const StatusBadge: React.FC<{ status: LegalCase['status'] }> = ({ status }) => {
     );
 };
 
+const ProsecutionStatus: React.FC<{ status: Anomaly['status'], isLoading: boolean }> = ({ status, isLoading }) => {
+    const steps = [
+        { name: 'ANALYZE & EXPOSE', status: 'Detected' },
+        { name: 'DRAFT PROSECUTION', status: 'Analyzed' },
+        { name: 'ISSUE VERDICT & EXPIRE', status: 'Brief Generated' },
+        { name: 'ACTIONED', status: 'Actioned' }
+    ];
+
+    const currentStepIndex = steps.findIndex(s => s.status === status);
+
+    return (
+        <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700">
+            <h4 className="text-sm font-semibold text-gray-400 mb-3">PROSECUTION STATUS</h4>
+            <div className="space-y-4">
+                {steps.map((step, index) => {
+                    const isCompleted = index < currentStepIndex || status === 'Actioned';
+                    const isCurrent = index === currentStepIndex && status !== 'Actioned';
+                    
+                    return (
+                        <div key={step.name} className="flex items-center gap-3 animate-fade-in-right" style={{animationDelay: `${index * 100}ms`}}>
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-colors ${isCompleted ? 'bg-green-500 text-white' : isCurrent ? 'bg-cyan-500 text-white' : 'bg-gray-600 text-gray-300'}`}>
+                                {isCompleted ? '✓' : index + 1}
+                            </div>
+                            <div className="flex-grow">
+                                <p className={`font-semibold transition-colors ${isCompleted || isCurrent ? 'text-gray-200' : 'text-gray-500'}`}>
+                                    {step.name}
+                                </p>
+                                {isCurrent && isLoading && (
+                                    <p className="text-xs text-cyan-400 animate-pulse">
+                                        Processing...
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
+
 export const Arconomics: React.FC<ArconomicsProps> = ({ 
     onAnalyzeAnomaly, 
-    onGenerateBrief,
-    onFileBrief,
     isLoading, 
     anomalies, 
     legalCases,
@@ -109,7 +146,7 @@ export const Arconomics: React.FC<ArconomicsProps> = ({
                             {anomalies.map(anomaly => (
                                 <button
                                     key={anomaly.id}
-                                    onClick={() => setSelectedAnomaly(anomaly)}
+                                    onClick={() => onAnalyzeAnomaly(anomaly)}
                                     disabled={anomaly.status === 'Actioned'}
                                     className={`w-full text-left p-2 rounded-md transition-colors ${selectedAnomaly?.id === anomaly.id ? 'bg-purple-600/30' : 'bg-gray-900/50 hover:bg-gray-700/50'} disabled:opacity-50 disabled:cursor-not-allowed`}
                                 >
@@ -211,32 +248,7 @@ export const Arconomics: React.FC<ArconomicsProps> = ({
                             )}
                         </div>
                         {/* Actions */}
-                        <div className="bg-gray-800/50 p-4 rounded-lg border border-gray-700 flex flex-col justify-center space-y-4">
-                            <button
-                                onClick={() => onAnalyzeAnomaly(selectedAnomaly)}
-                                disabled={isLoading || selectedAnomaly.status !== 'Detected'}
-                                className="w-full flex justify-center items-center py-2 text-base font-medium rounded-md text-white bg-cyan-600 hover:bg-cyan-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-                            >
-                                <ScaleIcon className="w-5 h-5 mr-2" />
-                                [ STEP 1 ] ANALYZE & EXPOSE
-                            </button>
-                             <button
-                                onClick={() => onGenerateBrief(selectedAnomaly)}
-                                disabled={isLoading || selectedAnomaly.status !== 'Analyzed'}
-                                className="w-full flex justify-center items-center py-2 text-base font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-                            >
-                                <GavelIcon className="w-5 h-5 mr-2" />
-                                [ STEP 2 ] DRAFT PROSECUTION
-                            </button>
-                             <button
-                                onClick={() => onFileBrief(selectedAnomaly)}
-                                disabled={isLoading || selectedAnomaly.status !== 'Brief Generated'}
-                                className="w-full flex justify-center items-center py-2 text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
-                            >
-                                <CourtIcon className="w-5 h-5 mr-2" />
-                                [ STEP 3 ] ISSUE VERDICT & EXPIRE
-                            </button>
-                        </div>
+                        <ProsecutionStatus status={selectedAnomaly.status} isLoading={isLoading} />
                     </div>
                 </div>
             )}
