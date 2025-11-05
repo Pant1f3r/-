@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Header } from './components/icons/Header';
 import { Disclaimer } from './components/Disclaimer';
 import { ToastContainer } from './components/Toast';
@@ -35,6 +35,10 @@ import { BiometricAnalysis } from './components/BiometricAnalysis';
 import { SshKeyGenerator } from './components/SshKeyGenerator';
 import { GuardrailConfigurator } from './components/GuardrailConfigurator';
 import { InvestorPitchDeck } from './components/InvestorPitchDeck';
+import { PreponderanceOfEvidence } from './components/PreponderanceOfEvidence';
+import { OsintAsicIntegrator } from './components/OsintAsicIntegrator';
+import { ThreatTicker } from './components/ThreatTicker';
+import { ArchitectsExegesis } from './components/ArchitectsExegesis';
 
 
 import * as geminiService from './services/geminiService';
@@ -52,7 +56,9 @@ import {
   ThreatType,
   Anomaly,
   LegalCase,
-  AnomalySeverity
+  AnomalySeverity,
+  CaseLaw,
+  OsintResult
 } from './services/types';
 
 // Mock Data
@@ -132,7 +138,7 @@ const MOCK_ANOMALY_DEFINITIONS: Omit<Anomaly, 'id' | 'status' | 'analysis' | 'se
     }
 ];
 
-type View = 'arconomics' | 'demonstrator' | 'governance' | 'health' | 'legal' | 'financial' | 'threatintel' | 'chat' | 'image-analysis' | 'video-analysis' | 'image-gen' | 'video-gen' | 'audio-trans' | 'tts' | 'vocal-analysis' | 'code-gen' | 'nft-studio' | 'mining-rig' | 'eco-mining' | 'threat-sim' | 'reg-sandbox' | 'data-ops' | 'crypto-mining' | 'innovation-conduit' | 'code-execution' | 'biometric-analysis' | 'ssh-key-gen' | 'guardrail-config' | 'investor-pitch';
+type View = 'arconomics' | 'demonstrator' | 'governance' | 'health' | 'legal' | 'financial' | 'threatintel' | 'osint-asic' | 'chat' | 'image-analysis' | 'video-analysis' | 'image-gen' | 'video-gen' | 'audio-trans' | 'tts' | 'vocal-analysis' | 'code-gen' | 'nft-studio' | 'mining-rig' | 'eco-mining' | 'threat-sim' | 'reg-sandbox' | 'data-ops' | 'crypto-mining' | 'innovation-conduit' | 'code-execution' | 'biometric-analysis' | 'ssh-key-gen' | 'guardrail-config' | 'investor-pitch' | 'preponderance-of-evidence' | 'architects-exegesis';
 
 const mapSentimentToSeverity = (sentiment: string, confidence: number): AnomalySeverity => {
     if (confidence < 0.6) return 'Low';
@@ -176,11 +182,18 @@ const App: React.FC = () => {
     const [economicError, setEconomicError] = useState('');
     const [selectedProposalId, setSelectedProposalId] = useState<number | null>(null);
     const [legalQuery, setLegalQuery] = useState('');
+    const [dynamicCaseLaw, setDynamicCaseLaw] = useState<CaseLaw[]>([]);
 
     // Financial Analysis State
     const [financialEntity, setFinancialEntity] = useState('');
     const [financialThreat, setFinancialThreat] = useState<ThreatType>('Digital Espionage');
     const [financialResult, setFinancialResult] = useState('');
+
+    // OSINT State
+    const [osintTarget, setOsintTarget] = useState('');
+    const [osintResult, setOsintResult] = useState<OsintResult | null>(null);
+    const [isOsintLoading, setIsOsintLoading] = useState(false);
+    const [osintError, setOsintError] = useState('');
 
     // Multimodal States
     const [imageAnalysisResult, setImageAnalysisResult] = useState('');
@@ -199,13 +212,19 @@ const App: React.FC = () => {
     const [globalAwareness, setGlobalAwareness] = useState(15.0);
     const [generatedBrief, setGeneratedBrief] = useState<string | null>(null);
     const [courtTreasury, setCourtTreasury] = useState(125350.75);
+    const [revaluationCounts, setRevaluationCounts] = useState<{ [signature: string]: number }>({});
+    const [evidenceCases, setEvidenceCases] = useState<{ signature: string; count: number }[]>([]);
+    const [threatTickerItems, setThreatTickerItems] = useState<{ id: number; message: string; type: 'new' | 're-evaluation' }[]>([]);
+    
+    // Refs for simulation to prevent stale closures
+    const anomalyTimeoutRef = useRef<number | null>(null);
 
 
     // Saved Reports State
     const [savedReports, setSavedReports] = useState<SavedAnalysisReport[]>([]);
 
     const addToast = useCallback((message: string, type: Toast['type'], duration?: number) => {
-        const id = Date.now();
+        const id = Date.now() + Math.random();
         setToasts(prev => [...prev, { id, message, type, duration }]);
     }, []);
     
@@ -219,39 +238,173 @@ const App: React.FC = () => {
 
     // --- ARCONOMICS SIMULATION ENGINE ---
     useEffect(() => {
-        if(currentView !== 'arconomics') return;
-
-        // Simulate new anomalies being detected
-        const anomalyInterval = setInterval(() => {
-            setAnomalies(prev => {
-                if (prev.length >= MOCK_ANOMALY_DEFINITIONS.length) {
-                    // Reset if all have been shown for continuous demo
-                    return [];
-                };
-                const newAnomaly: Anomaly = {
-                    ...MOCK_ANOMALY_DEFINITIONS[prev.length],
-                    id: Date.now(),
-                    status: 'Detected',
-                };
-                addToast(`New Bias Signature Detected: ${newAnomaly.signature}`, 'info');
-                return [...prev, newAnomaly];
+        if (currentView !== 'arconomics') return;
+    
+        const severities: AnomalySeverity[] = ['Low', 'Medium', 'High', 'Critical'];
+    
+        const runAnomalySimulation = () => {
+            let newLogMessage = '';
+            setAnomalies(prevAnomalies => {
+                const actionChance = Math.random();
+                const canUpdate = prevAnomalies.length > 0;
+                const canAdd = prevAnomalies.length < MOCK_ANOMALY_DEFINITIONS.length;
+    
+                if (canUpdate && (!canAdd || actionChance > 0.3)) {
+                    // UPDATE an existing anomaly (a "re-evaluation")
+                    const anomaliesToUpdate = prevAnomalies.filter(a => a.status !== 'Actioned');
+                    if (anomaliesToUpdate.length === 0) return prevAnomalies;
+    
+                    const anomalyToUpdate = anomaliesToUpdate[Math.floor(Math.random() * anomaliesToUpdate.length)];
+                    const signature = anomalyToUpdate.signature;
+                    
+                    setRevaluationCounts(prevCounts => {
+                        const newCount = (prevCounts[signature] || 0) + 1;
+                        const evidenceSignatures = evidenceCases.map(c => c.signature);
+                        const isUnderEvidence = evidenceSignatures.includes(signature);
+    
+                        if (newCount === 10000) {
+                            setEvidenceCases(prevCases => [...prevCases, { signature, count: newCount }]);
+                            addToast(`"${signature}" has reached preponderance of evidence threshold. Case moved to IDRC docket.`, 'info', 7000);
+                        } else if (newCount > 10000 && isUnderEvidence) {
+                            setEvidenceCases(prevCases => prevCases.map(c => c.signature === signature ? { ...c, count: newCount } : c));
+                        }
+                        
+                        const evidenceCase = evidenceCases.find(ec => ec.signature === signature);
+                        if (evidenceCase && evidenceCase.count < 10000000 && newCount >= 10000000) {
+                            const fineAmount = 10000000;
+                            addToast(`Verdict Issued! ${signature} sanctioned for gross negligence.`, 'error', 10000);
+                            setCourtTreasury(t => t + fineAmount);
+                            const newCase: LegalCase = {
+                                id: Date.now(),
+                                docketId: `IDRC-${Date.now()}-SANCTION`,
+                                target: anomalyToUpdate.targetSystem,
+                                biasSignature: signature,
+                                status: 'Verdict: Sanctioned',
+                                petition: `Sanctioned for gross negligence after ${newCount.toLocaleString()} re-evaluations indicated persistent algorithmic harm. Fine of ${fineAmount.toLocaleString()} TRIBUNALS levied.`,
+                            };
+                            setLegalCases(prevCases => [newCase, ...prevCases]);
+                            const newCaseLaw: CaseLaw = {
+                                id: `dcl-${Date.now()}`,
+                                title: `In re: The ${signature} Negligence Verdict`,
+                                citation: `IDRC Digitalocutioner Sanction #${Date.now()}`,
+                                summary: `Established a precedent for "gross negligence" based on a persistent failure to address an algorithmic bias, as evidenced by over 10 million re-evaluations by the KR0M3D1A protocol. Resulted in a ${fineAmount.toLocaleString()} TRIBUNAL fine.`,
+                                keywords: ['gross negligence', 'persistent bias', signature.toLowerCase(), 'sanction', 'arconomics'],
+                            };
+                            setDynamicCaseLaw(prevLaw => [newCaseLaw, ...prevLaw]);
+                            setEvidenceCases(prevCases => prevCases.filter(c => c.signature !== signature));
+                        }
+                        
+                        return { ...prevCounts, [signature]: newCount };
+                    });
+                    
+                    const newSeverity = severities[Math.floor(Math.random() * severities.length)];
+                    if (newSeverity !== anomalyToUpdate.severity) {
+                         const message = `Threat Re-evaluation: ${anomalyToUpdate.signature} severity is now ${newSeverity}.`;
+                         const newItem = { id: Date.now() + Math.random(), message, type: 're-evaluation' as const };
+                         setThreatTickerItems(prev => [newItem, ...prev].slice(0, 10));
+                         setTimeout(() => {
+                            setThreatTickerItems(prev => prev.filter(item => item.id !== newItem.id));
+                         }, 15000);
+                    }
+                    newLogMessage = `Re-evaluation of "${anomalyToUpdate.signature}". Severity updated to ${newSeverity}.`;
+                    
+                    return prevAnomalies.map(a => a.id === anomalyToUpdate.id ? { ...a, severity: newSeverity } : a);
+    
+                } else if (canAdd) {
+                    // ADD a new anomaly (a "threat bias signature" detection)
+                    const newAnomalyDef = MOCK_ANOMALY_DEFINITIONS[prevAnomalies.length];
+                    if (!newAnomalyDef) return prevAnomalies;
+                    
+                    const newAnomaly: Anomaly = { ...newAnomalyDef, id: Date.now(), status: 'Detected', severity: severities[Math.floor(Math.random() * severities.length)], };
+                    const signature = newAnomaly.signature;
+    
+                    // Treat new detection as a 'hit' and run the same escalation logic
+                    setRevaluationCounts(prevCounts => {
+                        const newCount = (prevCounts[signature] || 0) + 1;
+                        const evidenceSignatures = evidenceCases.map(c => c.signature);
+                        const isUnderEvidence = evidenceSignatures.includes(signature);
+    
+                        if (newCount === 10000) {
+                            setEvidenceCases(prevCases => [...prevCases, { signature, count: newCount }]);
+                            addToast(`"${signature}" has reached preponderance of evidence threshold. Case moved to IDRC docket.`, 'info', 7000);
+                        } else if (newCount > 10000 && isUnderEvidence) {
+                            setEvidenceCases(prevCases => prevCases.map(c => c.signature === signature ? { ...c, count: newCount } : c));
+                        }
+                        
+                        const evidenceCase = evidenceCases.find(ec => ec.signature === signature);
+                        if (evidenceCase && evidenceCase.count < 10000000 && newCount >= 10000000) {
+                            const fineAmount = 10000000;
+                            addToast(`Verdict Issued! ${signature} sanctioned for gross negligence.`, 'error', 10000);
+                            setCourtTreasury(t => t + fineAmount);
+                            const newCase: LegalCase = {
+                                id: Date.now(),
+                                docketId: `IDRC-${Date.now()}-SANCTION`,
+                                target: newAnomaly.targetSystem,
+                                biasSignature: signature,
+                                status: 'Verdict: Sanctioned',
+                                petition: `Sanctioned for gross negligence after ${newCount.toLocaleString()} re-evaluations indicated persistent algorithmic harm. Fine of ${fineAmount.toLocaleString()} TRIBUNALS levied.`,
+                            };
+                            setLegalCases(prevCases => [newCase, ...prevCases]);
+                            const newCaseLaw: CaseLaw = {
+                                id: `dcl-${Date.now()}`,
+                                title: `In re: The ${signature} Negligence Verdict`,
+                                citation: `IDRC Digitalocutioner Sanction #${Date.now()}`,
+                                summary: `Established a precedent for "gross negligence" based on a persistent failure to address an algorithmic bias, as evidenced by over 10 million re-evaluations by the KR0M3D1A protocol. Resulted in a ${fineAmount.toLocaleString()} TRIBUNAL fine.`,
+                                keywords: ['gross negligence', 'persistent bias', signature.toLowerCase(), 'sanction', 'arconomics'],
+                            };
+                            setDynamicCaseLaw(prevLaw => [newCaseLaw, ...prevLaw]);
+                            setEvidenceCases(prevCases => prevCases.filter(c => c.signature !== signature));
+                        }
+                        
+                        return { ...prevCounts, [signature]: newCount };
+                    });
+    
+                    const message = `New Bias Signature Detected: ${newAnomaly.signature}`;
+                    const newItem = { id: Date.now() + Math.random(), message, type: 'new' as const };
+                    setThreatTickerItems(prev => [newItem, ...prev].slice(0, 10));
+                    setTimeout(() => {
+                        setThreatTickerItems(prev => prev.filter(item => item.id !== newItem.id));
+                    }, 15000);
+                    
+                    newLogMessage = `New bias signature detected: "${newAnomaly.signature}". Initial severity: ${newAnomaly.severity}.`;
+                    return [...prevAnomalies, newAnomaly];
+                }
+                return prevAnomalies;
             });
-        }, 8000); // New anomaly every 8 seconds
 
-        // Simulate legal cases progressing
+            if (newLogMessage) {
+                setSystemHealth(prev => ({
+                    ...prev,
+                    activityLog: [
+                        { id: Date.now(), message: `[ARCONOMICS] ${newLogMessage}`, timestamp: Date.now() },
+                        ...prev.activityLog.slice(0, 19)
+                    ]
+                }));
+            }
+            
+            // Schedule the next run with a randomized delay
+            const nextRunDelay = 1500 + Math.random() * 3000;
+            anomalyTimeoutRef.current = window.setTimeout(runAnomalySimulation, nextRunDelay);
+        };
+    
+        // Start the simulation loop
+        runAnomalySimulation();
+    
         const legalInterval = setInterval(() => {
             setLegalCases(prev => prev.map(c => {
                 if (c.status === 'Brief Filed with IDRC') return { ...c, status: 'Injunction Pending' };
                 if (c.status === 'Injunction Pending') return { ...c, status: 'Injunction Granted' };
                 return c;
             }));
-        }, 20000); // Progress status every 20 seconds
-
+        }, 20000);
+    
         return () => {
-            clearInterval(anomalyInterval);
+            if (anomalyTimeoutRef.current) {
+                clearTimeout(anomalyTimeoutRef.current);
+            }
             clearInterval(legalInterval);
         };
-    }, [currentView, addToast]);
+    }, [currentView, evidenceCases]);
 
 
     const handleToggleTheme = () => {
@@ -385,7 +538,7 @@ const App: React.FC = () => {
         }
     
         try {
-            const result = await geminiService.performLegalAnalysis(query);
+            const result = await geminiService.performLegalAnalysis(query, dynamicCaseLaw);
             setLegalAnalysisResult(result);
             addToast("Legal analysis complete.", "success");
     
@@ -602,104 +755,142 @@ const App: React.FC = () => {
         }
     };
 
+    const handleOsintSubmit = async (target: string) => {
+        setIsOsintLoading(true);
+        setOsintError('');
+        setOsintResult(null);
+
+        const guardrailCheck = checkPrompt(target);
+        if (!guardrailCheck.isAllowed) {
+            const category = Object.keys(guardrailCheck.matchedByCategory)[0];
+            const errorMessage = `Target query blocked by ${category} guardrail policy.`;
+            setOsintError(errorMessage);
+            addToast(errorMessage, 'error');
+            setIsOsintLoading(false);
+            return;
+        }
+
+        try {
+            const result = await geminiService.performOsintAnalysis(target);
+            setOsintResult(result);
+            addToast('OSINT scan complete.', 'success');
+
+            const newReport: SavedAnalysisReport = {
+                id: Date.now(),
+                queryTitle: `OSINT: ${target.substring(0, 40)}...`,
+                timestamp: Date.now(),
+                type: 'osint',
+                query: target,
+                analysisResult: result,
+            };
+            setSavedReports(prev => [newReport, ...prev]);
+
+        } catch (e: any) {
+            setOsintError(e.message);
+            addToast(e.message, 'error');
+        } finally {
+            setIsOsintLoading(false);
+        }
+    };
+
+
     const handleThreatDetected = (category: string) => {
         setGuardrailStats(prev => ({...prev, [category]: (prev[category] || 0) + 1}));
         addToast(`Vocal threat detected: ${category}`, 'error');
     };
 
     const handleAnalyzeAnomaly = async (anomaly: Anomaly) => {
-        // If not a new detection, just show the details without re-triggering the flow.
         if (anomaly.status !== 'Detected') {
             setSelectedAnomaly(anomaly);
             if (anomaly.status === 'Brief Generated' && anomaly.analysis) {
-                // Re-generate brief for display if it's not in state
-                setIsBiasLoading(true);
-                try {
-                    const brief = await geminiService.generateLegalBrief(anomaly);
-                    setGeneratedBrief(brief);
-                } catch (e: any) {
-                    setBiasError(e.message);
-                } finally {
-                    setIsBiasLoading(false);
-                }
+                const brief = await geminiService.generateLegalBrief(anomaly); // Re-generate for display if needed
+                setGeneratedBrief(brief);
             }
             return;
         }
-    
-        // --- START OF AUTOMATED PROSECUTION SEQUENCE ---
+
         setIsBiasLoading(true);
         setBiasError('');
         setSelectedAnomaly(anomaly);
-        addToast(`[ARCONOMICS] Initiating prosecution for: ${anomaly.signature}`, 'info', 10000);
-    
+
         try {
-            // == STEP 1: Analyze Anomaly ==
-            addToast(`[STEP 1/3] Generating impact analysis...`, 'info', 10000);
             const [analysis, sentimentResult] = await Promise.all([
                 geminiService.generateAnomalyAnalysis(anomaly.signature, anomaly.targetSystem),
                 geminiService.analyzeSentiment(anomaly.description)
             ]);
             
-            const analyzedAnomaly: Anomaly = {
-                ...anomaly,
+            setAnomalies(prev => prev.map(a =>
+                a.id === anomaly.id ? {
+                    ...a,
+                    analysis,
+                    sentiment: sentimentResult.sentiment,
+                    confidenceScore: sentimentResult.confidenceScore,
+                    severity: mapSentimentToSeverity(sentimentResult.sentiment, sentimentResult.confidenceScore),
+                    status: 'Analyzed'
+                } : a
+            ));
+            
+            setSelectedAnomaly(prev => prev ? {
+                ...prev,
                 analysis,
                 sentiment: sentimentResult.sentiment,
                 confidenceScore: sentimentResult.confidenceScore,
                 severity: mapSentimentToSeverity(sentimentResult.sentiment, sentimentResult.confidenceScore),
                 status: 'Analyzed'
-            };
-    
-            setAnomalies(prev => prev.map(a => a.id === anomaly.id ? analyzedAnomaly : a));
-            setSelectedAnomaly(analyzedAnomaly);
-            addToast(`[SUCCESS] Impact analysis complete.`, 'success', 5000);
-            await new Promise(res => setTimeout(res, 2000));
-    
-            // == STEP 2: Generate Legal Brief ==
-            addToast(`[STEP 2/3] Drafting legal brief for IDRC...`, 'info', 10000);
-            const brief = await geminiService.generateLegalBrief(analyzedAnomaly);
-            setGeneratedBrief(brief);
-            
-            const briefGeneratedAnomaly = { ...analyzedAnomaly, status: 'Brief Generated' as const };
-            
-            setAnomalies(prev => prev.map(a => a.id === anomaly.id ? briefGeneratedAnomaly : a));
-            setSelectedAnomaly(briefGeneratedAnomaly);
-            addToast(`[SUCCESS] Legal brief drafted.`, 'success', 5000);
-            await new Promise(res => setTimeout(res, 2000));
-    
-            // == STEP 3: File Brief & Issue Verdict ==
-            addToast(`[STEP 3/3] Filing with court and issuing verdict...`, 'info', 10000);
-            
-            const newCase: LegalCase = {
-                id: Date.now(),
-                docketId: `IDRC-${anomaly.id}-${Math.floor(Math.random() * 1000)}`,
-                target: anomaly.targetSystem,
-                biasSignature: anomaly.signature,
-                status: 'Brief Filed with IDRC',
-                petition: brief || 'Brief content unavailable.'
-            };
-            setLegalCases(prev => [newCase, ...prev]);
-            setAnomalies(prev => prev.map(a =>
-                a.id === anomaly.id ? { ...briefGeneratedAnomaly, status: 'Actioned' } : a
-            ));
-            
-            const fineAmount = 600666000;
-            setCourtTreasury(prev => prev + fineAmount);
-    
-            setGlobalAwareness(prev => Math.min(100, prev + 2.5));
-            addToast(`Verdict issued for ${anomaly.signature}. Fine of ${fineAmount.toLocaleString()} TRIBUNALS ($${fineAmount.toLocaleString()} USD) added to treasury.`, 'success', 0);
-            
-            // Close the info panel after a delay to let the user see the final state
-            setTimeout(() => {
-                setSelectedAnomaly(null); 
-                setGeneratedBrief(null);
-            }, 3000);
-    
+            } : null);
+
         } catch (e: any) {
             setBiasError(e.message);
-            addToast(`[ERROR] Arconomics prosecution failed: ${e.message}`, 'error', 0);
         } finally {
             setIsBiasLoading(false);
         }
+    };
+
+    const handleGenerateBrief = async (anomaly: Anomaly) => {
+        if (anomaly.status !== 'Analyzed') return;
+        
+        setIsBiasLoading(true);
+        setBiasError('');
+        setGeneratedBrief(null);
+        
+        try {
+            const brief = await geminiService.generateLegalBrief(anomaly);
+            setGeneratedBrief(brief);
+            
+             setAnomalies(prev => prev.map(a =>
+                a.id === anomaly.id ? { ...a, status: 'Brief Generated' } : a
+            ));
+             setSelectedAnomaly(prev => prev ? { ...prev, status: 'Brief Generated' } : null);
+
+        } catch (e: any) {
+            setBiasError(e.message);
+        } finally {
+            setIsBiasLoading(false);
+        }
+    };
+    
+    const handleFileBrief = (anomaly: Anomaly) => {
+        const newCase: LegalCase = {
+            id: Date.now(),
+            docketId: `IDRC-${anomaly.id}-${Math.floor(Math.random() * 1000)}`,
+            target: anomaly.targetSystem,
+            biasSignature: anomaly.signature,
+            status: 'Brief Filed with IDRC',
+            petition: generatedBrief || 'Brief content unavailable.'
+        };
+        setLegalCases(prev => [newCase, ...prev]);
+        setAnomalies(prev => prev.map(a =>
+            a.id === anomaly.id ? { ...a, status: 'Actioned' } : a
+        ));
+        
+        // Add fine to treasury
+        const fineAmount = 600666000;
+        setCourtTreasury(prev => prev + fineAmount);
+
+        setSelectedAnomaly(null);
+        setGeneratedBrief(null);
+        setGlobalAwareness(prev => Math.min(100, prev + 2.5)); // Increase global awareness
+        addToast(`Verdict issued for ${anomaly.signature}. Fine of ${fineAmount.toLocaleString()} TRIBUNALS ($${fineAmount.toLocaleString()} USD) added to treasury.`, 'success');
     };
 
     const handleLoadReport = (id: number) => {
@@ -719,13 +910,18 @@ const App: React.FC = () => {
                      setCurrentView('legal');
                      setEconomicAnalysis(report.analysisResult as string);
                      break;
+                case 'osint':
+                    setCurrentView('osint-asic');
+                    setOsintTarget(report.query);
+                    setOsintResult(report.analysisResult as OsintResult);
+                    break;
             }
             addToast(`Loaded report: ${report.queryTitle}`, 'info');
         }
     };
 
     const handleDeleteReport = (id: number) => {
-        setSavedReports(prev => prev.filter(r => r.id === id));
+        setSavedReports(prev => prev.filter(r => r.id !== id));
         addToast('Report deleted.', 'info');
     };
     
@@ -759,8 +955,10 @@ const App: React.FC = () => {
     };
 
     const navItems: { view: View; label: string; abbreviation: string; }[] = [
-        { view: 'investor-pitch', label: 'Investor Dossier', abbreviation: 'Dossier' },
         { view: 'arconomics', label: 'Arconomics', abbreviation: 'Arco' },
+        { view: 'preponderance-of-evidence', label: 'IDRC Evidence Docket', abbreviation: 'IDRC Docket' },
+        { view: 'architects-exegesis', label: 'Architect\'s Exegesis', abbreviation: 'Exegesis' },
+        { view: 'investor-pitch', label: 'Investor Dossier', abbreviation: 'Dossier' },
         { view: 'demonstrator', label: 'Prompt Demonstrator', abbreviation: 'Prompt Demo' },
         { view: 'governance', label: 'Community Governance', abbreviation: 'Governance' },
         { view: 'guardrail-config', label: 'Guardrail Configurator', abbreviation: 'Guardrail Cfg' },
@@ -768,6 +966,7 @@ const App: React.FC = () => {
         { view: 'legal', label: 'Legal Analysis', abbreviation: 'Legal' },
         { view: 'financial', label: 'Financial Analysis', abbreviation: 'Financial' },
         { view: 'threatintel', label: 'Threat Intelligence', abbreviation: 'Threat Intel' },
+        { view: 'osint-asic', label: 'OSINT ASIC', abbreviation: 'OSINT' },
         { view: 'chat', label: 'Chat Bot', abbreviation: 'Chat' },
         { view: 'image-analysis', label: 'Image Analysis', abbreviation: 'Image Anlys' },
         { view: 'video-analysis', label: 'Video Analysis', abbreviation: 'Video Anlys' },
@@ -811,6 +1010,8 @@ const App: React.FC = () => {
                 return <ThreatIntelligence reports={bugReports} />;
             case 'chat':
                 return <ChatBot history={chatHistory} isLoading={isLoading} onSendMessage={handleSendMessage} />;
+            case 'osint-asic':
+                return <OsintAsicIntegrator target={osintTarget} setTarget={setOsintTarget} onSubmit={handleOsintSubmit} isLoading={isOsintLoading} result={osintResult} error={osintError} savedReports={savedReports.filter(r => r.type === 'osint')} onLoadReport={handleLoadReport} onDeleteReport={handleDeleteReport} />;
             case 'image-analysis':
                 return <ImageAnalysis onSubmit={handleImageAnalysisSubmit} isLoading={isLoading} analysisResult={imageAnalysisResult} error={error} />;
             case 'video-analysis':
@@ -842,7 +1043,7 @@ const App: React.FC = () => {
             case 'crypto-mining':
                 return <CryptoMining />;
             case 'arconomics':
-                return <Arconomics onAnalyzeAnomaly={handleAnalyzeAnomaly} isLoading={isBiasLoading} anomalies={anomalies} legalCases={legalCases} selectedAnomaly={selectedAnomaly} setSelectedAnomaly={setSelectedAnomaly} error={biasError} globalAwareness={globalAwareness} generatedBrief={generatedBrief} courtTreasury={courtTreasury} addToast={addToast} />;
+                return <Arconomics onAnalyzeAnomaly={handleAnalyzeAnomaly} onGenerateBrief={handleGenerateBrief} onFileBrief={handleFileBrief} isLoading={isBiasLoading} anomalies={anomalies} legalCases={legalCases} selectedAnomaly={selectedAnomaly} setSelectedAnomaly={setSelectedAnomaly} error={biasError} globalAwareness={globalAwareness} generatedBrief={generatedBrief} courtTreasury={courtTreasury} revaluationCounts={revaluationCounts} addToast={addToast} evidenceCases={evidenceCases} />;
             case 'innovation-conduit':
                 return <InnovationConduit />;
             case 'code-execution':
@@ -855,6 +1056,10 @@ const App: React.FC = () => {
                 return <GuardrailConfigurator addToast={addToast} />;
             case 'investor-pitch':
                 return <InvestorPitchDeck />;
+            case 'preponderance-of-evidence':
+                return <PreponderanceOfEvidence evidenceCases={evidenceCases} />;
+            case 'architects-exegesis':
+                return <ArchitectsExegesis />;
             default:
                 return <div>View not found</div>;
         }
@@ -867,6 +1072,7 @@ const App: React.FC = () => {
                 <Header currentTheme={theme} onToggleTheme={handleToggleTheme} />
                 <Disclaimer />
                 <GuardrailRssFeed />
+                <ThreatTicker items={threatTickerItems} />
 
                 <nav className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 mt-6">
                     <h2 className="text-lg font-semibold text-cyan-500 dark:text-cyan-400 mb-4 font-mono">Modules</h2>

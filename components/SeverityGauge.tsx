@@ -10,17 +10,13 @@ export const SeverityGauge: React.FC<SeverityGaugeProps> = ({ score }) => {
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
-    const getColor = () => {
-        if (score >= 8) return 'text-red-500';
-        if (score >= 5) return 'text-yellow-400';
-        return 'text-green-400';
+    const getColorValues = () => {
+        if (score >= 8) return { class: 'text-red-500', hex: '#ef4444' };
+        if (score >= 5) return { class: 'text-yellow-400', hex: '#facc15' };
+        return { class: 'text-green-400', hex: '#4ade80' };
     };
 
-    const getGlow = () => {
-        if (score >= 8) return 'drop-shadow-[0_0_8px_theme(colors.red.500)]';
-        if (score >= 5) return 'drop-shadow-[0_0_8px_theme(colors.yellow.400)]';
-        return 'drop-shadow-[0_0_8px_theme(colors.green.400)]';
-    }
+    const color = getColorValues();
 
     return (
         <div className="relative w-36 h-36">
@@ -35,7 +31,7 @@ export const SeverityGauge: React.FC<SeverityGaugeProps> = ({ score }) => {
                     cy="60"
                 />
                 <circle
-                    className={`${getColor()} ${getGlow()}`}
+                    className={color.class}
                     strokeWidth="10"
                     strokeDasharray={circumference}
                     strokeDashoffset={strokeDashoffset}
@@ -45,11 +41,16 @@ export const SeverityGauge: React.FC<SeverityGaugeProps> = ({ score }) => {
                     r={radius}
                     cx="60"
                     cy="60"
-                    style={{ transform: 'rotate(-90deg)', transformOrigin: 'center', transition: 'stroke-dashoffset 0.5s ease-out' }}
+                    style={{
+                        transform: 'rotate(-90deg)',
+                        transformOrigin: 'center',
+                        transition: 'stroke-dashoffset 0.5s ease-out, filter 0.5s ease-out',
+                        filter: `drop-shadow(0 0 8px ${color.hex})`
+                    }}
                 />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span className={`text-4xl font-bold ${getColor()}`}>{score.toFixed(1)}</span>
+                <span className={`text-3xl font-bold ${color.class}`}>{score.toFixed(1)}</span>
                 <span className="text-xs text-gray-400">Severity Score</span>
             </div>
         </div>

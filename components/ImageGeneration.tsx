@@ -53,10 +53,10 @@ export const ImageGeneration: React.FC<ImageGenerationProps> = ({
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3 text-glow-main-title">
           <WandIcon className="w-8 h-8 text-purple-400" />
-          AI Image Generation
+          Kubernetics AI Image Generation
         </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Use the KR0M3D1A protocol's creative core, powered by Gemini, to generate high-quality images from text descriptions.
+          Use the KR0M3D1A protocol's creative core, powered by Gemini, to generate high-quality images from text descriptions through its Kubernetics image pipeline.
         </p>
       </div>
 

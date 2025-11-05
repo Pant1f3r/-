@@ -6,11 +6,16 @@ import { CodeIcon } from './icons/CodeIcon';
 const LANGUAGES = ['TypeScript', 'Python', 'Go', 'HTML/CSS'];
 
 const LoadingSkeleton: React.FC = () => (
-    <div className="space-y-3 animate-pulse">
-        <div className="h-4 bg-gray-700 rounded w-1/4"></div>
-        <div className="h-4 bg-gray-700 rounded w-3/4"></div>
-        <div className="h-4 bg-gray-700 rounded w-full"></div>
-        <div className="h-4 bg-gray-700 rounded w-5/6"></div>
+    <div className="bg-gray-900/70 p-4 rounded-md animate-pulse">
+        <div className="space-y-3">
+            <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+            <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-700 rounded w-5/6 ml-4"></div>
+            <div className="h-4 bg-gray-700 rounded w-1/2 ml-4"></div>
+            <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-700 rounded w-1/2 ml-4"></div>
+            <div className="h-4 bg-gray-700 rounded w-full"></div>
+        </div>
     </div>
 );
 
@@ -69,10 +74,10 @@ export const FullStackIntegrator: React.FC = () => {
             <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3 text-glow-main-title">
                     <CodeIcon className="w-8 h-8 text-purple-400" />
-                    Full-Stack Code Integrator
+                    Kubernetics Full-Stack Code Integrator
                 </h2>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                    Leverage the KR0M3D1A AI to generate production-ready code snippets. Describe your component or logic, select a language, and receive a complete implementation.
+                    Leverage the KR0M3D1A AI to generate production-ready code snippets. Describe your component or logic, select a language, and receive a complete implementation from the Kubernetics core.
                 </p>
             </div>
 

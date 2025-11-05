@@ -89,10 +89,10 @@ export const ImageAnalysis: React.FC<ImageAnalysisProps> = ({
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3 text-glow-main-title">
           <PhotoIcon className="w-8 h-8 text-purple-400" />
-          Multimodal Image Analysis
+          Kubernetics Multimodal Image Analysis
         </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Upload an image and use the KR0M3D1A AI to analyze its content. Ask questions, get descriptions, and explore the power of multimodal AI.
+          Upload an image and use the KR0M3D1A AI to analyze its content. Ask questions, get descriptions, and explore the power of multimodal Kubernetics AI.
         </p>
       </div>
 

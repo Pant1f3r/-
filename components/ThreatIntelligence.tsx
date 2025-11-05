@@ -45,10 +45,10 @@ export const ThreatIntelligence: React.FC<ThreatIntelligenceProps> = ({ reports 
             <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3">
                     <BugIcon className="w-8 h-8 text-orange-500" />
-                    Guardrail Codex: Identified Bugs
+                    Kubernetics Guardrail Codex: Identified Bugs
                 </h2>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                    A live feed of identified system vulnerabilities and their current mitigation status, managed under the DEJA' VU protocol's proactive threat assessment mandate and its proprietary spythagorithm.
+                    A live feed of identified system vulnerabilities and their current mitigation status, managed under the DEJA' VU protocol's proactive threat assessment mandate and its proprietary Kubernetics spythagorithm.
                 </p>
             </div>
 

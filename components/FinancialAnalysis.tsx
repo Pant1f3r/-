@@ -302,7 +302,7 @@ export const FinancialAnalysis: React.FC<FinancialAnalysisProps> = ({
             <div className="text-center">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-glow-main-title">KR0M3D1A™ Financial Threat Analysis</h2>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                    Powered by the <span className="font-mono font-bold text-cyan-500">NεΩ</span> AI under the <span className="font-mono font-bold text-purple-400">DEJA' VU</span> protocol. Enter an entity and select a threat vector to perform a simulated digital threat assessment based on cryptologic spythagorithms.
+                    Powered by the <span className="font-mono font-bold text-cyan-500">NεΩ</span> AI under the <span className="font-mono font-bold text-purple-400">DEJA' VU</span> protocol. Enter an entity and select a threat vector to perform a simulated digital threat assessment based on cryptologic Kubernetics and spythagorithms.
                 </p>
             </div>
             

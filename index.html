@@ -335,21 +335,66 @@
         to { stroke-dashoffset: -80; }
     }
 
-    /* Progress Bar Animations */
-    @keyframes indeterminate-anim {
-      from { transform: translateX(-100%); }
-      to { transform: translateX(300%); } /* move across 1.5 * width */
+    /* C.A.P.A.C. Visualizer styles */
+    .fibonacci-spiral-path {
+        stroke: #8b5cf6; /* purple-500 */
+        stroke-width: 1;
+        filter: drop-shadow(0 0 5px #a78bfa);
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        animation: draw-spiral 8s ease-in-out forwards;
     }
-    .progress-bar-indeterminate {
-        animation: indeterminate-anim 1.5s linear infinite;
+
+    @keyframes draw-spiral {
+        to {
+            stroke-dashoffset: 0;
+        }
     }
-    @keyframes determinate-anim {
-        from { width: 0%; }
-        to { width: 100%; }
+
+    .zodiac-symbol {
+        font-size: 24px;
+        fill: #c4b5fd; /* purple-300 */
+        opacity: 0;
+        animation: fade-in-symbol 1s ease-out forwards;
+        text-shadow: 0 0 8px #a78bfa;
     }
-    .progress-bar-determinate {
-        animation: determinate-anim 8s ease-out forwards;
+    
+    @keyframes fade-in-symbol {
+        from { opacity: 0; transform: scale(0.5); }
+        to { opacity: 1; transform: scale(1); }
     }
+
+    .solstice-marker {
+        fill: #fde047; /* yellow-300 */
+        filter: drop-shadow(0 0 4px #facc15);
+        opacity: 0;
+        animation: fade-in-symbol 1.5s ease-out forwards;
+    }
+    
+    .equinox-label {
+        font-size: 10px;
+        font-family: 'Roboto Mono', monospace;
+        fill: #a5f3fc; /* cyan-200 */
+        text-shadow: 0 0 5px #22d3ee;
+        opacity: 0;
+        animation: fade-in-symbol 1.2s ease-out forwards;
+    }
+
+    .diabolical-symbol {
+        font-size: 16px;
+        font-family: monospace;
+        fill: rgba(139, 92, 246, 0.3);
+        animation: digital-flicker 10s infinite;
+        opacity: 0;
+    }
+
+    @keyframes digital-flicker {
+        0%, 100% { opacity: 0; }
+        5%, 15%, 25% { opacity: 1; }
+        10%, 20%, 30% { opacity: 0; }
+    }
+
+
   </style>
 
   <script type="importmap">

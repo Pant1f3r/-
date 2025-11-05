@@ -6,6 +6,7 @@ import { ScaleIcon } from './icons/ScaleIcon';
 import { BookOpenIcon } from './icons/BookOpenIcon';
 import { TargetIcon } from './icons/TargetIcon';
 import { BtcIcon } from './icons/BtcIcon';
+import { MagnifyingGlassIcon } from './icons/MagnifyingGlassIcon';
 
 interface AnalysisHistoryProps {
   reports: SavedAnalysisReport[];
@@ -26,6 +27,8 @@ const ReportHistoryItem: React.FC<{ report: SavedAnalysisReport; onLoad: (id: nu
                 return <TargetIcon className="w-6 h-6 text-red-500 flex-shrink-0" />;
             case 'crypto':
                 return <BtcIcon className="w-6 h-6 text-yellow-500 flex-shrink-0" />;
+            case 'osint':
+                return <MagnifyingGlassIcon className="w-6 h-6 text-blue-500 flex-shrink-0" />;
             default:
                 return null;
         }

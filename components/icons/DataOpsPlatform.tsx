@@ -79,55 +79,14 @@ export const DataOpsPlatform: React.FC = () => {
     return (
         <main className="mt-8 space-y-8">
             <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3 text-glow-main-title">
                     <CodeIcon className="w-8 h-8 text-cyan-400" />
-                    Data Operations Platform
+                    Kubernetics Data Operations Platform
                 </h2>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                    Monitor and manage data pipelines, ETL jobs, and system integrations for the KR0M3D1A protocol.
+                    Monitor and manage data pipelines, ETL jobs, and system integrations for the KR0M3D1A protocol's Kubernetics core.
                 </p>
             </div>
 
             {/* Stats Overview */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <StatCard icon={<ServerStackIcon className="w-8 h-8"/>} label="Data Processed (24h)" value={`${stats.dataProcessed.toFixed(2)} TB`} />
-                <StatCard icon={<ClockIcon className="w-8 h-8"/>} label="Avg. Pipeline Latency" value={`${stats.latency.toFixed(0)} ms`} />
-                <StatCard icon={<ExclamationTriangleIcon className="w-8 h-8"/>} label="Job Error Rate" value={`${stats.errorRate.toFixed(3)}%`} />
-                <StatCard icon={<ArrowsRightLeftIcon className="w-8 h-8"/>} label="Active Pipelines" value={`${activePipelines} / ${totalPipelines}`} />
-            </div>
-
-            {/* Pipelines and Logs */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                <div className="lg:col-span-3 bg-gray-800 border border-gray-700 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-gray-200 mb-4">Pipeline Status</h3>
-                    <div className="space-y-3">
-                        {mockPipelines.map(pipeline => (
-                            <div key={pipeline.id} className="bg-gray-900/50 p-3 rounded-md flex justify-between items-center">
-                                <div>
-                                    <p className="font-semibold text-gray-300">{pipeline.name}</p>
-                                    <p className="text-xs text-gray-500">Last run: {pipeline.lastRun}</p>
-                                </div>
-                                <PipelineStatus status={pipeline.status as any} />
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="lg:col-span-2 bg-black border border-gray-700 rounded-lg p-4 font-mono text-sm h-[350px] flex flex-col">
-                    <h3 className="text-cyan-400 mb-2 flex-shrink-0">[LIVE JOB LOG]</h3>
-                    <div className="overflow-y-auto flex-grow">
-                        {logs.map((entry, index) => {
-                            const isError = entry.startsWith('[ERROR]');
-                            const isWarning = entry.startsWith('[WARNING]');
-                            const colorClass = isError ? 'text-red-400' : isWarning ? 'text-yellow-400' : 'text-green-400';
-                            return (
-                                <p key={index} className={`whitespace-pre-wrap animate-fade-in-right ${colorClass}`}>
-                                    <span className="text-gray-500 mr-2">&gt;</span>{entry}
-                                </p>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
-        </main>
-    );
-};
+            <div className="

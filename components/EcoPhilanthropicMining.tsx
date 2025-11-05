@@ -19,9 +19,9 @@ export const EcoPhilanthropicMining: React.FC = () => {
     return (
         <main className="mt-8 space-y-8">
             <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-glow-main-title">Eco-Philanthropic Mining Protocol</h2>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-glow-main-title">Eco-Philanthropic Kubernetics Mining Protocol</h2>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                    Welcome to the core of the KR0M3D1A initiative: A self-sustaining, carbon-negative mining operation governed by the DEJA' VU directive. Here, surplus computational power is transmuted into "Ohmz Perpetual Ether"—a digital commodity funding global philanthropic efforts.
+                    Welcome to the core of the KR0M3D1A initiative: A self-sustaining, carbon-negative mining operation governed by the DEJA' VU directive. Here, surplus computational power is transmuted into "Ohmz Perpetual Ether"—a digital commodity funding global philanthropic efforts via Kubernetics.
                 </p>
             </div>
             

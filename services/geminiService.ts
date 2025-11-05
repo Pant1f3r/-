@@ -1,5 +1,5 @@
 import { GoogleGenAI, GenerateContentResponse, Chat, Part, GenerateContentParameters, Modality, FunctionDeclaration, Type } from "@google/genai";
-import { LegalAnalysisResult, Anomaly, BiasSimulationResult } from "./types";
+import { LegalAnalysisResult, Anomaly, BiasSimulationResult, CaseLaw, OsintResult, OsintSource, ProtocolStructure } from "./types";
 import { findRelevantCases } from "./caseLawService";
 
 // According to guidelines, API key MUST be from process.env.API_KEY.
@@ -10,7 +10,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 // Define the legal compliance check tool for the KR0M3D1A protocol
 const legalComplianceCheckTool: FunctionDeclaration = {
     name: 'legalComplianceCheck',
-    description: 'Performs a mandatory legal compliance check on a draft response against the KR0M3D1A protocol before finalizing it for the user.',
+    description: 'Performs a mandatory legal compliance check on a draft response against the KR0M3D1A Kubernetics protocol before finalizing it for the user.',
     parameters: {
         type: Type.OBJECT,
         properties: {
@@ -48,6 +48,27 @@ export const generateContent = async (
     onProgress?: (message: string) => void
 ): Promise<GenerateContentResponse> => {
     
+    // Check if the call is for structured JSON output.
+    const isJsonRequest = config?.responseSchema && config?.responseMimeType === 'application/json';
+
+    if (isJsonRequest) {
+        // This is a direct request for JSON. Do not use the function calling wrapper logic.
+        // Also, using gemini-flash-latest is more efficient for this structured task.
+        const request: GenerateContentParameters = {
+            model: 'gemini-flash-latest', 
+            contents: prompt,
+            config: {
+                ...config
+            }
+        };
+        if (systemInstruction) {
+            request.config!.systemInstruction = systemInstruction;
+        }
+
+        return await ai.models.generateContent(request);
+    }
+
+    // Original logic with function calling for general text generation
     onProgress?.('Generating initial draft...');
 
     const request: GenerateContentParameters = {
@@ -91,7 +112,7 @@ export const generateContent = async (
             contents: [
                 { role: 'user', parts: [{ text: prompt }] },
                 { role: 'model', parts: [{ functionCall: functionCalls[0] }] },
-                { role: 'user', parts: toolResponseParts },
+                { role: 'function', parts: toolResponseParts },
             ],
         });
 
@@ -116,8 +137,8 @@ export const createChat = (systemInstruction: string): Chat => {
 /**
  * Performs legal analysis, grounding the response with case law.
  */
-export const performLegalAnalysis = async (query: string): Promise<LegalAnalysisResult> => {
-    const relevantCases = findRelevantCases(query);
+export const performLegalAnalysis = async (query: string, dynamicCaseLaw: CaseLaw[] = []): Promise<LegalAnalysisResult> => {
+    const relevantCases = findRelevantCases(query, dynamicCaseLaw);
 
     const systemInstruction = `You are L.E.X., a specialized legal AI counsel. Your purpose is to provide objective, clear, and structured legal analysis based on provided case law precedents. You must structure your response in Markdown with the following sections: ### Executive Summary, ### Detailed Analysis, and ### Precedent Breakdown. In the Detailed Analysis and Precedent Breakdown, you must explicitly reference the provided precedents by name (e.g., "(see Netz v. Cyberspace Media)") where relevant. Do not invent new cases. Your analysis should be based *only* on the provided context.`;
     
@@ -510,4 +531,150 @@ export const simulateBias = async (algorithm: string, parameters: string): Promi
         console.error("Failed to parse bias simulation JSON:", response.text, e);
         throw new Error("Invalid JSON response from bias simulation API.");
     }
+};
+
+/**
+ * Performs an OSINT analysis on a target using Google Search grounding.
+ */
+export const performOsintAnalysis = async (target: string): Promise<OsintResult> => {
+    const prompt = `Act as a world-class OSINT (Open-Source Intelligence) analyst. Your designation is "ASIC-7". You are to gather a comprehensive intelligence dossier on the following target: "${target}". Use the provided search tool to find recent and relevant public information. Structure your report in Markdown with the following sections: ### Overview, ### Key Personnel, ### Recent Activities, ### Online Presence, and ### Potential Vulnerabilities. Be concise and factual. Do not speculate beyond the information you can find.`;
+    
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: prompt,
+        config: {
+          tools: [{googleSearch: {}}],
+        },
+    });
+
+    const sources: OsintSource[] = [];
+    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
+    if (groundingChunks) {
+        for (const chunk of groundingChunks) {
+            if (chunk.web) {
+                sources.push({
+                    uri: chunk.web.uri || '',
+                    title: chunk.web.title || 'Untitled Source',
+                });
+            }
+        }
+    }
+
+    return {
+        analysis: response.text,
+        sources: sources,
+    };
+};
+
+/**
+ * Deduces the core components of the KR0M3D1A protocol from a foundational text.
+ */
+export const deduceProtocolStructure = async (genesisText: string): Promise<ProtocolStructure> => {
+    const systemInstruction = `You are a KR0M3D1A Protocol Exegete, a specialized AI that analyzes and deconstructs foundational philosophical texts about digital systems. Your task is to read the provided 'Genesis Text' and extract its core components into a structured format. Identify concepts that fit into the categories of modules, algorithms, sectors, vectors, and principles, based on the text's own esoteric language. Be creative in your interpretation but ground it in the provided words.`;
+
+    const userPrompt = `From the following Genesis Text, pinpoint the exact "module molecules", "algorithms", "sectors", "vectors", and "coreal' principals". Deduce a logarithmic and multilingual interpretation. Populate the JSON schema with your findings.
+
+    Genesis Text:
+    ---
+    ${genesisText}
+    ---
+    `;
+    
+    const protocolSchema = {
+        type: Type.OBJECT,
+        properties: {
+            modules: {
+                type: Type.ARRAY,
+                description: "Distinct functional units or 'molecules' of the protocol.",
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        name: { type: Type.STRING, description: "The name of the module, derived from the text (e.g., 'Digital Crustacean Shell')." },
+                        description: { type: Type.STRING, description: "A brief, one-sentence summary of the module's purpose based on the text." }
+                    },
+                    required: ['name', 'description']
+                }
+            },
+            algorithms: {
+                type: Type.ARRAY,
+                description: "Specific logical processes or 'equations' mentioned.",
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        name: { type: Type.STRING, description: "The name of the algorithm (e.g., 'Spidereal Logic', 'Horatio Ratio')." },
+                        description: { type: Type.STRING, description: "A brief, one-sentence summary of the algorithm's function." }
+                    },
+                    required: ['name', 'description']
+                }
+            },
+            sectors: {
+                type: Type.ARRAY,
+                description: "Operational domains or 'realms' where the protocol functions.",
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        name: { type: Type.STRING, description: "The name of the sector (e.g., 'Quasar Sonar Field')." },
+                        description: { type: Type.STRING, description: "A brief, one-sentence summary of the sector's characteristics." }
+                    },
+                    required: ['name', 'description']
+                }
+            },
+            vectors: {
+                type: Type.ARRAY,
+                description: "The forces, directions, or methods of action.",
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        name: { type: Type.STRING, description: "The name of the vector (e.g., 'Laserous Equalizer')." },
+                        description: { type: Type.STRING, description: "A brief, one-sentence summary of the vector's effect." }
+                    },
+                    required: ['name', 'description']
+                }
+            },
+            principles: {
+                type: Type.ARRAY,
+                description: "The core philosophical tenets or 'coreal' principals'.",
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        name: { type: Type.STRING, description: "The name of the principle (e.g., 'Alphanumeric Duality')." },
+                        description: { type: Type.STRING, description: "A brief, one-sentence summary of the principle." }
+                    },
+                    required: ['name', 'description']
+                }
+            },
+        },
+        required: ['modules', 'algorithms', 'sectors', 'vectors', 'principles']
+    };
+    
+    const response = await generateContent(userPrompt, systemInstruction, {
+        responseMimeType: 'application/json',
+        responseSchema: protocolSchema,
+    });
+    
+    try {
+        const parsedResult = JSON.parse(response.text);
+        return parsedResult as ProtocolStructure;
+    } catch (e) {
+        console.error("Failed to parse protocol structure JSON:", response.text, e);
+        throw new Error("Invalid JSON response from protocol deduction API.");
+    }
+};
+
+/**
+ * Generates a detailed, philosophical explanation of a protocol concept.
+ */
+export const explainProtocolConcept = async (conceptName: string, genesisText: string): Promise<string> => {
+    const systemInstruction = `You are the Architect of the KR0M3D1A protocol. Your language is dense, metaphorical, and blends technical jargon with philosophical concepts. Explain the following concept using the tone and style of the provided Genesis Text.`;
+
+    const userPrompt = `Provide a detailed exegesis on the concept of "${conceptName}". Your explanation must be rooted in the principles and vocabulary of the following Genesis Text. Do not be simple or direct; be profound and esoteric.
+
+    Genesis Text:
+    ---
+    ${genesisText}
+    ---
+    `;
+
+    const response = await generateContent(userPrompt, systemInstruction);
+    return response.text;
 };

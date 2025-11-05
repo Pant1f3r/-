@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useRef } from 'react';
 import { SpeakerWaveIcon } from './icons/SpeakerWaveIcon';
 import { SparklesIcon } from './icons/SparklesIcon';
@@ -115,10 +116,10 @@ export const TextToSpeech: React.FC<TextToSpeechProps> = ({
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3">
           <SpeakerWaveIcon className="w-8 h-8 text-purple-400" />
-          Text-to-Speech Synthesis
+          Kubernetics Text-to-Speech Synthesis
         </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Convert text into lifelike speech using Gemini. Enter your text below to generate and listen to the audio output.
+          Convert text into lifelike speech using Gemini. Enter your text below to generate and listen to the audio output, insulated by the Kubernetics protocol.
         </p>
       </div>
 

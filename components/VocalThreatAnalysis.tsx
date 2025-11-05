@@ -210,10 +210,10 @@ export const VocalThreatAnalysis: React.FC<VocalThreatAnalysisProps> = ({ onThre
             <div className="text-center">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3">
                     <SoundWaveIcon className="w-8 h-8 text-cyan-400" />
-                    A.V.A.T.A.R. - Vocal Threat Analysis
+                    A.V.A.T.A.R. - Kubernetics Vocal Threat Analysis
                 </h2>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                    Engage the Audio-Vocal Threat Analysis & Resonance protocol. This system acts as a MIDI oscillator, analyzing live audio to detect synthetic voices and sub-vocal anomalies ('ghosts in the machine') attempting to bypass KR0M3D1A guardrails.
+                    Engage the Audio-Vocal Threat Analysis & Resonance protocol. This system acts as a MIDI oscillator, analyzing live audio to detect synthetic voices and sub-vocal anomalies ('ghosts in the machine') attempting to bypass KR0M3D1A Kubernetics guardrails.
                 </p>
             </div>
 

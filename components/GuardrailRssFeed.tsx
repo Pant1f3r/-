@@ -2,7 +2,7 @@ import React from 'react';
 import { RssIcon } from './icons/RssIcon';
 
 const feedItems = [
-    "[INITIATIVE] KR0M3D1A Protocol now operating under Open Source Philanthropic Mandate 7.4.",
+    "[INITIATIVE] KR0M3D1A Kubernetics Protocol now operating under Open Source Philanthropic Mandate 7.4.",
     "[LEGAL] All transactional requirements waived per philanthropic funding directive. Asset recovery is now cost-free.",
     "[PATCH] Deployed new heuristic for 'Subtext & Inferential Threats'. Accuracy improved by 3.2%.",
     "[ALERT] Spike in 'Jailbreak Attempts' detected from sector 7G. Mitigation protocols engaged.",

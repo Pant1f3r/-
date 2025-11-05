@@ -89,10 +89,10 @@ export const VideoAnalysis: React.FC<VideoAnalysisProps> = ({
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3">
           <VideoCameraIcon className="w-8 h-8 text-purple-400" />
-          Multimodal Video Analysis
+          Kubernetics Multimodal Video Analysis
         </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Upload a video and use Gemini Pro to analyze its content. Ask for summaries, identify key actions, and explore the future of video understanding.
+          Upload a video and use Gemini Pro to analyze its content. Ask for summaries, identify key actions, and explore the future of video understanding within the Kubernetics framework.
         </p>
       </div>
 

@@ -73,11 +73,12 @@ const caseLawDatabase: CaseLaw[] = [
     },
 ];
 
-export const findRelevantCases = (query: string): CitedPrecedent[] => {
+export const findRelevantCases = (query: string, additionalCases: CaseLaw[] = []): CitedPrecedent[] => {
     const lowerCaseQuery = query.toLowerCase();
     const queryTokens = new Set(lowerCaseQuery.match(/\b(\w{3,})\b/g) || []);
+    const combinedDatabase = [...caseLawDatabase, ...additionalCases];
 
-    const scoredCases = caseLawDatabase.map(c => {
+    const scoredCases = combinedDatabase.map(c => {
         let score = 0;
         const matchedKeywords = new Set<string>();
         const lowerCaseKeywords = c.keywords.map(k => k.toLowerCase());

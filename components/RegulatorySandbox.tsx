@@ -21,10 +21,10 @@ export const RegulatorySandbox: React.FC = () => {
             <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3 text-glow-main-title">
                     <ShieldCheckmarkIcon className="w-8 h-8 text-green-400" />
-                    Regulatory Sandbox
+                    Kubernetics Regulatory Sandbox
                 </h2>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                    A controlled environment for testing and validating new guardrail proposals and AI safety protocols before they are deployed system-wide.
+                    A controlled environment for testing and validating new guardrail proposals and AI safety protocols before they are deployed system-wide into the core Kubernetics.
                 </p>
             </div>
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl p-6 min-h-[300px] flex items-center justify-center">

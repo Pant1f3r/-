@@ -156,7 +156,7 @@ Your analysis must incorporate the following principles:
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-glow-main-title">Community Governance</h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Review, vote on, and submit new proposals to improve the AI's client-side guardrails.
+          Review, vote on, and submit new proposals to improve the AI's client-side guardrails and Kubernetics architecture.
         </p>
       </div>
 
@@ -199,7 +199,7 @@ Your analysis must incorporate the following principles:
                       <button type="button" onClick={cancelAndResetForm} className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">Cancel</button>
                       <button type="submit" disabled={isSubmitting} className="px-6 py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-semibold rounded-lg disabled:bg-gray-600 disabled:cursor-not-allowed flex items-center">
                           {isSubmitting && (
-                              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                               </svg>

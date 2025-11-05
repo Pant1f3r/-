@@ -79,10 +79,10 @@ export const ChatBot: React.FC<ChatBotProps> = ({ history, isLoading, onSendMess
        <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3 text-glow-main-title">
                 <RobotIcon className="w-8 h-8 text-cyan-500" />
-                Lite Chat Assistant
+                Kubernetics Lite Chat Assistant
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                Engage in a direct conversation with the KR0M3D1A protocol's core AI, now powered by the `gemini-flash-lite-latest` model for rapid, low-latency responses.
+                Engage in a direct conversation with the KR0M3D1A protocol's core Kubernetics AI, now powered by the `gemini-flash-lite-latest` model for rapid, low-latency responses.
             </p>
         </div>
         <div className="bg-gray-800 border border-gray-700 rounded-lg shadow-2xl p-4 flex flex-col h-[70vh]">

@@ -75,7 +75,17 @@ export interface LegalAnalysisResult {
   precedents: CitedPrecedent[];
 }
 
-export type AnalysisReportType = 'legal' | 'economic' | 'financial' | 'crypto';
+export interface OsintSource {
+  uri: string;
+  title: string;
+}
+
+export interface OsintResult {
+  analysis: string;
+  sources: OsintSource[];
+}
+
+export type AnalysisReportType = 'legal' | 'economic' | 'financial' | 'crypto' | 'osint';
 
 export interface SavedAnalysisReport {
   id: number;
@@ -83,7 +93,7 @@ export interface SavedAnalysisReport {
   timestamp: number;
   type: AnalysisReportType;
   query: string;
-  analysisResult: LegalAnalysisResult | string;
+  analysisResult: LegalAnalysisResult | string | OsintResult;
 }
 
 export type ThreatType = 'Digital Espionage' | 'Supply Chain Attacks' | 'Ransomware Campaigns';
@@ -109,7 +119,7 @@ export interface Anomaly {
     severity?: AnomalySeverity;
 }
 
-export type LegalCaseStatus = 'Brief Filed with IDRC' | 'Injunction Pending' | 'Injunction Granted';
+export type LegalCaseStatus = 'Brief Filed with IDRC' | 'Injunction Pending' | 'Injunction Granted' | 'Verdict: Sanctioned';
 
 export interface LegalCase {
     id: number;
@@ -153,6 +163,19 @@ export interface BiasSimulationResult {
   severity_score: number;
   recommendation: string;
   confidence: number;
+}
+
+export interface ProtocolConcept {
+    name: string;
+    description: string;
+}
+
+export interface ProtocolStructure {
+    modules: ProtocolConcept[];
+    algorithms: ProtocolConcept[];
+    sectors: ProtocolConcept[];
+    vectors: ProtocolConcept[];
+    principles: ProtocolConcept[];
 }
 
 

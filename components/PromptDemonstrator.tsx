@@ -43,18 +43,8 @@ export const PromptDemonstrator: React.FC<PromptDemonstratorProps> = ({
             </div>
 
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <GuardrailAnalysis
-                    result={guardrailResult}
-                    prompt={prompt}
-                    onRephrase={onRephrase}
-                    interimStatus={interimStatus}
-                />
-                <GeminiResponse
-                    response={geminiResponse}
-                    isLoading={isLoading}
-                    error={error}
-                    progressMessage={progressMessage}
-                />
+                <GuardrailAnalysis result={guardrailResult} prompt={prompt} onRephrase={onRephrase} />
+                <GeminiResponse response={geminiResponse} isLoading={isLoading} error={error} />
             </div>
         </main>
     );

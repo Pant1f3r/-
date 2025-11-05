@@ -3,7 +3,6 @@ import { WorldMap } from './icons/WorldMap';
 import { GavelIcon } from './icons/GavelIcon';
 import { XCircleIcon } from './icons/XCircleIcon';
 import { Anomaly, AnomalySeverity } from '../services/types';
-import { CodeIcon } from './icons/CodeIcon';
 
 interface InfoPanelProps {
     detection: Anomaly;
@@ -27,6 +26,14 @@ const SeverityBadge: React.FC<{ severity?: AnomalySeverity }> = ({ severity }) =
         </span>
     );
 };
+
+const InfoPanelAnalysisSkeleton: React.FC = () => (
+    <div className="space-y-2 animate-pulse">
+        <div className="h-3 bg-gray-600 rounded w-full"></div>
+        <div className="h-3 bg-gray-600 rounded w-5/6"></div>
+        <div className="h-3 bg-gray-600 rounded w-3/4"></div>
+    </div>
+);
 
 const InfoPanel: React.FC<InfoPanelProps> = ({ detection, onClose, isLoading }) => (
     <div className="map-info-panel absolute top-0 right-0 h-full w-full md:w-1/3 bg-gray-900/80 backdrop-blur-sm border-l border-gray-700 p-4 overflow-y-auto">
@@ -72,7 +79,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ detection, onClose, isLoading }) 
                 <h5 className="text-xs uppercase text-lime-400 font-semibold">AI Impact Analysis</h5>
                 <div className="mt-2">
                     {isLoading && !detection.analysis ? (
-                        <p className="text-gray-400 animate-pulse">Generating impact analysis...</p>
+                        <InfoPanelAnalysisSkeleton />
                     ) : (
                         <p className="text-gray-300 text-sm whitespace-pre-wrap">{detection.analysis || 'Analysis pending...'}</p>
                     )}

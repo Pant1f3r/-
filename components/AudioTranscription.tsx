@@ -66,10 +66,10 @@ export const AudioTranscription: React.FC<AudioTranscriptionProps> = ({
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3 text-glow-main-title">
           <MicrophoneIcon className="w-8 h-8 text-purple-400" />
-          AI Audio Transcription
+          Kubernetics AI Audio Transcription
         </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Use your microphone to record audio and get a real-time transcription from the KR0M3D1A protocol, powered by Gemini 2.5 Flash.
+          Use your microphone to record audio and get a real-time transcription from the KR0M3D1A protocol, powered by Gemini 2.5 Flash's Kubernetics-integrated speech model.
         </p>
       </div>
 

@@ -11,10 +11,15 @@ interface State {
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  state: State = {
-    hasError: false,
-    error: null,
-  };
+  // FIX: Refactored to use a constructor for state initialization and method binding.
+  // The class field syntax was likely not supported by the build environment, causing `this.setState` and `this.props` to be undefined.
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      hasError: false,
+      error: null,
+    };
+  }
 
   static getDerivedStateFromError(error: Error): State {
     // Update state so the next render will show the fallback UI.
@@ -27,10 +32,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
-    // FIX: In a class component, `setState` must be called on the component instance (`this`).
-    // FIX: Corrected to use `this.setState` as it is a class component.
     this.setState({ hasError: false, error: null });
-  };
+  }
 
   render() {
     if (this.state.hasError) {
@@ -63,8 +66,6 @@ export class ErrorBoundary extends Component<Props, State> {
       );
     }
 
-    // FIX: In a class component, `props` must be accessed from the component instance (`this`).
-    // FIX: Corrected to use `this.props` as it is a class component.
     return this.props.children;
   }
 }

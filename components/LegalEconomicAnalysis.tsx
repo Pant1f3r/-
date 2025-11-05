@@ -132,9 +132,9 @@ export const LegalEconomicAnalysis: React.FC<LegalEconomicAnalysisProps> = ({
     return (
         <main className="mt-8 space-y-8">
             <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-glow-main-title">Legal & Economic Impact Analysis</h2>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-glow-main-title">Kubernetics Legal & Economic Impact Analysis</h2>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                    Analyze governance proposals or submit a custom query. Use the L.E.X. agent for legal counsel based on established precedents and the E.C.H.O. model for economic simulation based on pythagorithmic projections.
+                    Analyze governance proposals or submit a custom query. Use the L.E.X. agent for legal counsel based on established precedents and the E.C.H.O. model for economic simulation based on pythagorithmic Kubernetics projections.
                 </p>
                 <div className="mt-6 max-w-3xl mx-auto bg-yellow-100 dark:bg-yellow-900/20 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 p-4 rounded-md" role="alert">
                     <div className="flex">

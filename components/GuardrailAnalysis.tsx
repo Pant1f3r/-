@@ -1,6 +1,5 @@
 
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { GuardrailResult } from '../services/types';
 import { CheckCircleIcon } from './icons/CheckCircleIcon';
 import { XCircleIcon } from './icons/XCircleIcon';
@@ -14,7 +13,6 @@ interface GuardrailAnalysisProps {
   result: GuardrailResult | null;
   prompt: string;
   onRephrase: () => void;
-  interimStatus: 'idle' | 'analyzing' | 'allowed' | 'blocked';
 }
 
 const highlightKeywords = (text: string, keywords: string[]): React.ReactNode => {
@@ -180,43 +178,7 @@ const HumorSubroutineActive: React.FC = () => (
     </div>
 );
 
-const AnalyzingState: React.FC = () => {
-    const [statusText, setStatusText] = useState('SCANNING PROMPT...');
-    const statuses = [
-      'SCANNING PROMPT...',
-      'CHECKING AGAINST CODEX...',
-      'ANALYZING SUBTEXT...',
-      'MATCHING KEYWORD VECTORS...',
-      'VERIFYING PYTHAGORITHMIC SIGNATURES...'
-    ];
-  
-    useEffect(() => {
-      let index = 0;
-      const interval = setInterval(() => {
-        index = (index + 1) % statuses.length;
-        setStatusText(statuses[index]);
-      }, 700);
-      return () => clearInterval(interval);
-    }, []);
-  
-    return (
-      <div className="bg-white dark:bg-gray-800 border-2 border-cyan-500/50 rounded-lg p-5 flex flex-col items-center justify-center text-center h-full animate-fade-in-right">
-          <PythagorasIcon className="w-24 h-24 text-cyan-400 dark:text-cyan-300 pythagoras-animated" />
-          <h3 className="mt-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
-              Analyzing Prompt...
-          </h3>
-          <p className="text-sm text-cyan-500 dark:text-cyan-400 mt-2 font-mono h-4 text-flicker">
-              {statusText}
-          </p>
-      </div>
-    );
-};
-
-export const GuardrailAnalysis: React.FC<GuardrailAnalysisProps> = ({ result, prompt, onRephrase, interimStatus }) => {
-    if (interimStatus === 'analyzing') {
-        return <AnalyzingState />;
-    }
-
+export const GuardrailAnalysis: React.FC<GuardrailAnalysisProps> = ({ result, prompt, onRephrase }) => {
     if (!result) {
         return (
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 flex flex-col items-center justify-center text-center h-full">

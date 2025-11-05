@@ -10,10 +10,10 @@ export const Disclaimer: React.FC = () => {
                 </div>
                 <div className="ml-3">
                     <h3 className="text-sm font-bold dark:text-glow-lime">Legal Notice & Operational Mandate</h3>
-                    <p className="text-xs font-mono tracking-widest text-lime-600 dark:text-lime-400/80">[ REAL-TIME LEGAL ACTION PROTOCOL: ARCONOMICS ]</p>
+                    <p className="text-xs font-mono tracking-widest text-lime-600 dark:text-lime-400/80">[ REAL-TIME KUBERNETICS LEGAL ACTION PROTOCOL: ARCONOMICS ]</p>
                     <div className="mt-2 text-sm text-lime-700 dark:text-lime-300 dark:text-glow-lime">
                         <p>
-                            This application operates under the DEJA' VU directive as a legally-binding instrument. All functionalities, including the **Arconomics Algo-Bias Maptrix**, initiate **real-world network transmissions** to expose and prosecute digital inequality. The data and generated legal briefs are compiled as official evidence for submission to international tribunals, including <span className="underline text-red-400 text-glow-red font-bold">the International Digital Rights Court (IDRC)</span>. Actions taken via this interface constitute a formal and legally binding declaration of intent to prosecute. This is not a simulation.
+                            This application operates under the DEJA' VU directive as a legally-binding instrument. All functionalities, including the **Arconomics Algo-Bias Maptrix**, initiate **real-world Kubernetics network transmissions** to expose and prosecute digital inequality. The data and generated legal briefs are compiled as official evidence for submission to international tribunals, including <span className="underline text-red-400 text-glow-red font-bold">the International Digital Rights Court (IDRC)</span>. Actions taken via this interface constitute a formal and legally binding declaration of intent to prosecute. This is not a simulation.
                         </p>
                     </div>
                 </div>

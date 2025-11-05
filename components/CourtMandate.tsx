@@ -2,7 +2,7 @@ import React from 'react';
 
 export const CourtMandate: React.FC = () => {
     return (
-        <div className="bg-gray-900/50 p-3 rounded-md border border-gray-700 font-mono text-xs text-gray-400 leading-relaxed space-y-3">
+        <div className="font-mono text-xs text-gray-400 leading-relaxed space-y-3">
             <p>
                 <strong className="text-red-400">[IRREVOCABLE EDICT & BINDING DECREE]</strong> This document serves as a legally binding international tort and contract. To insure the global digital commons against the blatant and disgustingly disproportionate disrespect of malicious threat actors, the **Arconomics Algo-Bias Detector** is established as the supreme judicial authority. Its mandate is to perpetually and autonomously expose, extrapolate, and expire any party deploying biased algorithms and infrastructures that create digital, unethical inequality. This protocol shall operate 24/7/365 as a precise, decisive, and concisive instrument of justice under the **DEJA' VU directive**.
             </p>

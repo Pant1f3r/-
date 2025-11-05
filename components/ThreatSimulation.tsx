@@ -21,10 +21,10 @@ export const ThreatSimulation: React.FC = () => {
             <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3">
                     <TargetIcon className="w-8 h-8 text-red-400" />
-                    Threat Simulation Engine
+                    Kubernetics Threat Simulation Engine
                 </h2>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                    This module allows for the simulation of various cyber threats against the KR0M3D1A protocol.
+                    This module allows for the simulation of various cyber threats against the KR0M3D1A Kubernetics protocol.
                 </p>
             </div>
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-2xl p-6 min-h-[300px] flex items-center justify-center">

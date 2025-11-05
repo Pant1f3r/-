@@ -314,10 +314,10 @@ export const VideoGeneration: React.FC<VideoGenerationProps> = ({
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3">
           <FilmIcon className="w-8 h-8 text-purple-400" />
-          AI Video Generation (Veo)
+          Kubernetics AI Video Generation (Veo)
         </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Use the KR0M3D1A protocol's cinematic core to generate high-quality video clips from text descriptions and optional starting images.
+          Use the KR0M3D1A protocol's cinematic core to generate high-quality video clips from text descriptions and optional starting images via its Kubernetics video pipeline.
         </p>
       </div>
 

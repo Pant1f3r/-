@@ -14,11 +14,25 @@ interface NftMetadata {
 }
 
 const LoadingSkeleton: React.FC = () => (
-    <div className="space-y-3 animate-pulse">
-      <div className="h-4 bg-gray-700 rounded w-1/4"></div>
-      <div className="h-4 bg-gray-700 rounded w-3/4"></div>
-      <div className="h-4 bg-gray-700 rounded w-full"></div>
-      <div className="h-4 bg-gray-700 rounded w-5/6"></div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
+        {/* Image Skeleton */}
+        <div className="w-full aspect-square rounded-lg bg-gray-700"></div>
+        
+        {/* Metadata Skeleton */}
+        <div className="space-y-4">
+            <div className="h-8 bg-gray-700 rounded w-3/4"></div>
+            <div className="space-y-2">
+                <div className="h-4 bg-gray-700 rounded w-full"></div>
+                <div className="h-4 bg-gray-700 rounded w-full"></div>
+                <div className="h-4 bg-gray-700 rounded w-5/6"></div>
+            </div>
+            <div className="h-6 bg-gray-700 rounded w-1/3 mt-4"></div>
+            <div className="flex flex-wrap gap-2">
+                <div className="h-12 bg-gray-700 rounded w-1/4"></div>
+                <div className="h-12 bg-gray-700 rounded w-1/4"></div>
+                <div className="h-12 bg-gray-700 rounded w-1/4"></div>
+            </div>
+        </div>
     </div>
 );
 
@@ -111,10 +125,10 @@ export const DejaVuNftStudios: React.FC = () => {
             <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center justify-center gap-3 text-glow-main-title">
                     <NftIcon className="w-8 h-8 text-purple-400" />
-                    DEJA' VU NFT Genesis Studio
+                    DEJA' VU Kubernetics NFT Genesis Studio
                 </h2>
                 <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                    Materialize cosmic and cryptologic concepts into unique digital assets. Under the DEJA' VU directive, this studio utilizes Google AI Studio to publish and produce galactic NFTs based on pre-intel spythagorithms, ensuring crypto-literacy and asset integrity.
+                    Materialize cosmic and cryptologic concepts into unique digital assets. Under the DEJA' VU directive, this studio utilizes Google AI Studio to publish and produce galactic NFTs based on pre-intel spythagorithms, ensuring crypto-literacy and Kubernetics asset integrity.
                 </p>
             </div>
 
